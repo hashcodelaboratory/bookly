@@ -1,7 +1,5 @@
 "use client" // limitation here for BETA https://nextui.org/docs/guide/nextui-plus-nextjs
 import {
-  Button,
-  Card,
   Container,
   createTheme,
   Grid,
@@ -9,20 +7,18 @@ import {
   NextUIProvider,
   Pagination,
   Spacer,
-  Text,
-  Textarea,
   useInput
 } from "@nextui-org/react";
-import {FormEventHandler, SyntheticEvent, useState} from "react";
+import {useState} from "react";
 import {ThemeProvider as NextThemesProvider} from 'next-themes'
-import {v4} from "uuid";
 import {useSearch} from "bookly/hook/use-search";
-import {useValidation} from "bookly/hook/use-validation";
 import {Book} from "bookly/model/book";
 import {NavigationBar} from "bookly/molecules/navigation-bar";
 import {Modal} from "bookly/molecules/modal/modal";
 import {BookModalBody} from "bookly/components/book-modal-body";
 import {BooksTable} from "bookly/components/books-table/books-table";
+import {BookForm} from "bookly/components/book-form";
+import {BooksGrid} from "bookly/components/books-grid";
 
 const lightTheme = createTheme({
   type: 'light',
@@ -107,24 +103,10 @@ const Home = () => {
                   {/* @ts-ignore - auto not supported from typing definition */}
                   <Grid xs="auto" md={0}>
                     <Grid>
-                      <Grid.Container gap={1} css={{paddingBottom: '2rem'}}>
-                        {results.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE).map((book) =>
-                          <Grid key={book.key} xs>
-                            <Card isHoverable isPressable variant="flat" onPress={() => {
-                              handler()
-                              setSelectedBook(book)
-                            }}>
-                              <Card.Header>
-                                <Text b size={24} css={{
-                                  textGradient: "45deg, $blue600 -20%, $pink600 50%",
-                                }}>{book.title}</Text>
-                              </Card.Header>
-                              <Card.Body>
-                                <BookModalBody book={book}/>
-                              </Card.Body>
-                            </Card>
-                          </Grid>)}
-                      </Grid.Container>
+                      <BooksGrid books={results.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE)} onPress={(book: Book) => {
+                        handler()
+                        setSelectedBook(book)
+                      }}/>
                     </Grid>
                   </Grid>
                   {/* @ts-ignore - auto not supported from typing definition */}
