@@ -1,5 +1,6 @@
 import {styled, Table} from "@nextui-org/react";
 import {ReactNode} from "react";
+import {Testable} from "bookly/types/testable";
 
 const DataCell = styled('div', {
   maxWidth: '150px',
@@ -11,11 +12,11 @@ const DataCell = styled('div', {
   WebkitLineClamp: 4,
 })
 
-type DataTableCellProps = {
+type DataTableCellProps = Testable & {
   value: ReactNode
 }
 
-export const DataTableCell = ({value}: DataTableCellProps) =>
-  <DataCell>
+export const DataTableCell = ({id, value}: DataTableCellProps) =>
+  <DataCell id={id}>
     {value}
   </DataCell>

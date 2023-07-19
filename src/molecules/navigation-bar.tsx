@@ -1,6 +1,7 @@
 import {Navbar, Switch, SwitchEvent, Text, useTheme} from "@nextui-org/react";
 import {useTheme as useNextTheme} from "next-themes";
 import { BiSolidSun, BiSolidMoon } from "react-icons/bi";
+import {BooklyPageModel} from "../../cypress/e2e/bookly-page-model";
 
 export const NavigationBar = () => {
   const {isDark, type} = useTheme();
@@ -23,6 +24,7 @@ export const NavigationBar = () => {
     <Navbar.Content>
       <Navbar.Item>
         <Switch
+          id={BooklyPageModel.ThemeSwitch}
           checked={isDark}
           onChange={onThemeChange}
           iconOn={<BiSolidMoon />}

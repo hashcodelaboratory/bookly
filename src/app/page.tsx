@@ -16,6 +16,7 @@ import {usePagination} from "bookly/hook/use-pagination";
 import {useBookDetail} from "bookly/hook/use-book-detail";
 import {withBookContext} from "bookly/context/with-book-context";
 import {useBookContext} from "bookly/context/use-book-context";
+import {BooklyPageModel} from "../../cypress/e2e/bookly-page-model";
 
 const PAGE_SIZE = 6;
 
@@ -76,6 +77,7 @@ const Home = () => {
         </Grid.Container>
       </MainContainer>
       <Modal
+        id={BooklyPageModel.BookDetailModal}
         open={isBookDetailVisible && !!selectedBook}
         onClose={closeDetail}
         header={selectedBook?.title ?? '-'}

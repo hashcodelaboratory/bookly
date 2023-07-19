@@ -11,10 +11,7 @@ type BooksTableProps = {
   onDetailClick: (book: Book) => void
 }
 
-export const BooksTable = ({onDetailClick}: BooksTableProps) => {
-  const {books} = useBookContext()
-
-  return <FullWidthTable
+export const BooksTable = ({books, onDetailClick}: BooksTableProps) => <FullWidthTable
     shadow={false}
     // @ts-ignore prevent table border
     borderWeight={0}
@@ -32,4 +29,3 @@ export const BooksTable = ({onDetailClick}: BooksTableProps) => {
       rowsPerPage={8}
     />
   </FullWidthTable>
-}

@@ -1,9 +1,10 @@
 import {Input as NextUIInput} from "@nextui-org/react";
 import {Bindable} from "bookly/types/bindable";
+import {Testable} from "bookly/types/testable";
 
 type Variant = "primary" | "error" | "success"
 
-type InputProps = Bindable & {
+type InputProps = Bindable & Testable & {
   status: Variant;
   label: string;
   placeholder: string;
@@ -12,8 +13,9 @@ type InputProps = Bindable & {
   helperText?: string;
 }
 
-export const Input = ({bindings, status, label, placeholder, color, helperText, helperColor}: InputProps) =>
+export const Input = ({id, bindings, status, label, placeholder, color, helperText, helperColor}: InputProps) =>
   <NextUIInput
+    id={id}
     {...bindings}
     animated={false}
     status={status}

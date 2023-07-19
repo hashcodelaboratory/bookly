@@ -2,6 +2,7 @@ import {Book} from "bookly/model/book";
 import {Button, styled, Table} from "@nextui-org/react";
 import {DataTableCell} from "bookly/molecules/table/data-table-cell";
 import {Key} from "react";
+import {BooklyPageModel} from "../../../cypress/e2e/bookly-page-model";
 
 const RightAlignedButton = styled(Button, {
   float: 'right'
@@ -14,6 +15,7 @@ export const bookToTableRow = (onDetailClick: (book: Book) => void) =>
 
   const actionCell = <Table.Cell css={{paddingRight: 0}}>
     <RightAlignedButton
+      id={BooklyPageModel.BooksTableDetailButton}
       onClick={onClick}
       flat
       color="primary"
@@ -23,7 +25,7 @@ export const bookToTableRow = (onDetailClick: (book: Book) => void) =>
   </Table.Cell>
 
   const dataCell = (columnKey: Key) => <Table.Cell css={{verticalAlign: 'top'}}>
-    <DataTableCell value={book[columnKey as keyof typeof book]}/>
+    <DataTableCell id={BooklyPageModel.BookTitleInTableRow + "-" + book[columnKey as keyof typeof book].replace(" ", "-")} value={book[columnKey as keyof typeof book]}/>
   </Table.Cell>
 
   return (

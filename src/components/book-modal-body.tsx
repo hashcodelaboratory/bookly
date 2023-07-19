@@ -7,6 +7,7 @@ type BookModalBodyProps = {
 }
 
 export const BookModalBody = ({ book: { author, description }}: BookModalBodyProps) => <>
+  {/* TODO: possible enhancement to integrate i18n to localize strings*/}
   <ModalBodyItem label="Description" value={description}/>
   <Spacer y={0.2}/>
   <ModalBodyItem label="Author" value={author}/>
