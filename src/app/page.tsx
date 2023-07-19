@@ -50,24 +50,11 @@ const Home = () => {
   const {value: description, reset: descriptionReset, bindings: descriptionBindings} = useInput("");
 
   const {queryBindings, results} = useSearch(books, ["title", "author", "description"])
-  const {enabled, enableValidation, disableValidation, color, isValid} = useValidation(title);
 
-  const onSave: FormEventHandler = (event: SyntheticEvent) => {
-    event.preventDefault()
-
-    if (!enabled) {
-      enableValidation()
-    }
-
-    if (!isValid) {
-      return
-    }
-
-    setBooks([...books, {title, author, description, key: v4()}])
+  const onSave = () => {
     titleReset()
     authorReset()
     descriptionReset()
-    disableValidation()
   }
 
   return (
@@ -87,73 +74,12 @@ const Home = () => {
             <Grid.Container direction="row">
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs={12} md="auto">
-                <form onSubmit={onSave}>
-                  <Grid.Container direction="column">
-                    <Grid>
-                      <Grid.Container direction="column">
-                        <Grid>
-                          <Grid.Container direction="row">
-                            {/* @ts-ignore - auto not supported from typing definition */}
-                            <Grid xs={12} sm="auto">
-                              <Input
-                                status={color}
-                                color={color}
-                                helperColor={color}
-                                helperText="* required"
-                                animated={false}
-                                {...titleBindings}
-                                label="Title"
-                                clearable
-                                placeholder="e.g. The Lost City"
-                                fullWidth
-                              />
-                            </Grid>
-                            {/* gap is not working as expected */}
-                            <Grid>
-                              <Spacer x={1}/>
-                            </Grid>
-                            {/* @ts-ignore - auto not supported from typing definition */}
-                            <Grid xs={12} sm="auto">
-                              <Input
-                                animated={false}
-                                status="primary"
-                                {...authorBindings}
-                                helperText="optional"
-                                label="Author"
-                                clearable
-                                placeholder="e.g. John Doe"
-                                fullWidth
-                              />
-                            </Grid>
-                          </Grid.Container>
-                        </Grid>
-                        {/* gap is not working as expected */}
-                        <Grid>
-                          <Spacer y={1.5}/>
-                        </Grid>
-                        <Grid>
-                          <Textarea
-                            animated={false}
-                            status="primary"
-                            {...descriptionBindings}
-                            helperText={`optional ${description.length} / 300`}
-                            label="Description"
-                            placeholder="e.g. A thrilling adventure awaits as our heroes embark on a quest to find the lost city."
-                            fullWidth
-                            maxLength={300}
-                          />
-                        </Grid>
-                      </Grid.Container>
-                    </Grid>
-                    {/* gap is not working as expected */}
-                    <Grid>
-                      <Spacer y={2}/>
-                    </Grid>
-                    <Grid>
-                      <Button size="lg" style={{width: '100%', zIndex: 1}} color="gradient" type="submit">Save</Button>
-                    </Grid>
-                  </Grid.Container>
-                </form>
+                <BookForm
+                  titleBindings={titleBindings}
+                  authorBindings={authorBindings}
+                  descriptionBindings={descriptionBindings}
+                  onSubmit={onSave}
+                />
               </Grid>
               {/* gap is not working as expected */}
               <Grid>
