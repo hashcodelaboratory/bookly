@@ -1,30 +1,28 @@
-import {Button, Grid, Spacer, Textarea} from "@nextui-org/react";
-import {BindingsChangeTarget} from "@nextui-org/react/types/use-input/use-input";
+import {Button, Grid, Spacer, useInput} from "@nextui-org/react";
 import {useValidation} from "bookly/hook/use-validation";
 import {SyntheticEvent} from "react";
 import {Input} from "bookly/molecules/input";
 import {TextArea} from "bookly/molecules/text-area";
-
-type BookFormProps = {
-  titleBindings: {
-    value: string;
-    onChange: (event: BindingsChangeTarget) => void;
-  }
-  authorBindings: {
-    value: string;
-    onChange: (event: BindingsChangeTarget) => void;
-  }
-  descriptionBindings: {
-    value: string;
-    onChange: (event: BindingsChangeTarget) => void;
-  }
-  onSubmit: () => void;
-}
+import {withBookContext} from "bookly/context/with-book-context";
+import {useBookContext} from "bookly/context/use-book-context";
+import {v4} from "uuid";
 
 const DESCRIPTION_MAX_LENGTH = 300
 
-export const BookForm = ({titleBindings, authorBindings, descriptionBindings, onSubmit}: BookFormProps) => {
+export const BookForm = () => {
+  const { addBook } = useBookContext()
+
+  const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
+  const {value: author, reset: authorReset, bindings: authorBindings} = useInput("");
+  const {value: description, reset: descriptionReset, bindings: descriptionBindings} = useInput("");
   const {enabled, enableValidation, disableValidation, color, isValid} = useValidation(titleBindings.value);
+
+  const resetForm = () => {
+    titleReset()
+    authorReset()
+    descriptionReset()
+    disableValidation()
+  }
 
   const onSubmitAction = (event: SyntheticEvent) => {
     event.preventDefault()
@@ -37,8 +35,8 @@ export const BookForm = ({titleBindings, authorBindings, descriptionBindings, on
       return
     }
 
-    onSubmit()
-    disableValidation()
+    addBook({ title, author, description, key: v4() })
+    resetForm()
   }
 
 
@@ -99,5 +97,4 @@ export const BookForm = ({titleBindings, authorBindings, descriptionBindings, on
       </Grid>
     </Grid.Container>
   </form>
-
 }

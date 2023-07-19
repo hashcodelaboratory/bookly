@@ -1,8 +1,6 @@
 "use client" // limitation here for BETA https://nextui.org/docs/guide/nextui-plus-nextjs
-import {Grid, Spacer, useInput} from "@nextui-org/react";
-import {useState} from "react";
+import {Grid, Spacer} from "@nextui-org/react";
 import {useSearch} from "bookly/hook/use-search";
-import {Book} from "bookly/model/book";
 import {NavigationBar} from "bookly/molecules/navigation-bar";
 import {Modal} from "bookly/molecules/modal/modal";
 import {BookModalBody} from "bookly/components/book-modal-body";
@@ -10,34 +8,22 @@ import {BooksTable} from "bookly/components/books-table/books-table";
 import {BookForm} from "bookly/components/book-form";
 import {BooksGrid} from "bookly/components/books-grid";
 import {Pagination} from "bookly/components/pagination";
-import {v4} from "uuid";
 import {withThemesProvider} from "bookly/theme/with-themes-provider";
 import {MainContainer} from "bookly/components/styled/main-container";
 import {TableContainer} from "bookly/components/styled/table-container";
 import {Search} from "bookly/components/search";
 import {usePagination} from "bookly/hook/use-pagination";
 import {useBookDetail} from "bookly/hook/use-book-detail";
+import {withBookContext} from "bookly/context/with-book-context";
+import {useBookContext} from "bookly/context/use-book-context";
 
 const PAGE_SIZE = 6;
 
 const Home = () => {
+  const {books} = useBookContext()
   const {isBookDetailVisible, openDetail, closeDetail, selectedBook} = useBookDetail()
-
-  const [books, setBooks] = useState<Book[]>([])
-  const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
-  const {value: author, reset: authorReset, bindings: authorBindings} = useInput("");
-  const {value: description, reset: descriptionReset, bindings: descriptionBindings} = useInput("");
-
   const {queryBindings, results} = useSearch(books, ["title", "author", "description"])
   const {currentPageItems, onPageChange} = usePagination(results, PAGE_SIZE)
-
-  const onSave = () => {
-    setBooks([...books, {title, author, description, key: v4()}])
-
-    titleReset()
-    authorReset()
-    descriptionReset()
-  }
 
   return (
     <main>
@@ -47,12 +33,7 @@ const Home = () => {
         <Grid.Container direction="row">
           {/* @ts-ignore - auto not supported from typing definition */}
           <Grid xs={12} md="auto">
-            <BookForm
-              titleBindings={titleBindings}
-              authorBindings={authorBindings}
-              descriptionBindings={descriptionBindings}
-              onSubmit={onSave}
-            />
+            <BookForm/>
           </Grid>
           {/* gap is not working as expected */}
           <Grid>
@@ -105,4 +86,4 @@ const Home = () => {
   )
 }
 
-export default withThemesProvider(Home)
+export default withThemesProvider(withBookContext(Home))

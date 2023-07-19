@@ -10,17 +10,18 @@ const darkTheme = createTheme({
   type: 'dark',
 })
 
-// eslint-disable-next-line react/display-name
-export const withThemesProvider: HigherOrderComponent = (WrappedComponent) => (props) =>
-  <NextThemesProvider
-    defaultTheme="system"
-    attribute="class"
-    value={{
-      light: lightTheme.className,
-      dark: darkTheme.className
-    }}
-  >
-    <NextUIProvider>
-      <WrappedComponent {...props} />
-    </NextUIProvider>
-  </NextThemesProvider>
+export const withThemesProvider: HigherOrderComponent = (WrappedComponent) =>
+  // eslint-disable-next-line react/display-name
+  (props) =>
+    <NextThemesProvider
+      defaultTheme="system"
+      attribute="class"
+      value={{
+        light: lightTheme.className,
+        dark: darkTheme.className
+      }}
+    >
+      <NextUIProvider>
+        <WrappedComponent {...props} />
+      </NextUIProvider>
+    </NextThemesProvider>
