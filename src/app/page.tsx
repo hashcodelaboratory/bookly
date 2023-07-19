@@ -1,14 +1,14 @@
 "use client" // limitation here for BETA https://nextui.org/docs/guide/nextui-plus-nextjs
 import {
   Button,
+  Card,
   Container,
   createTheme,
   Grid,
   Input,
-  Modal,
   NextUIProvider,
+  Pagination,
   Spacer,
-  Table,
   Text,
   Textarea,
   useInput
@@ -19,53 +19,30 @@ import {v4} from "uuid";
 import {useSearch} from "bookly/hook/use-search";
 import {useValidation} from "bookly/hook/use-validation";
 import {Book} from "bookly/model/book";
-import {NavigationBar} from "bookly/components/navigation-bar";
+import {NavigationBar} from "bookly/molecules/navigation-bar";
+import {Modal} from "bookly/molecules/modal/modal";
+import {BookModalBody} from "bookly/components/book-modal-body";
+import {BooksTable} from "bookly/components/books-table/books-table";
 
 const lightTheme = createTheme({
   type: 'light',
-  theme: {
-    colors: {
-      primary: '#3ABEFF',
-    }
-  }
 })
 
 const darkTheme = createTheme({
   type: 'dark',
-  theme: {
-    colors: {
-      primary: '#7F5AF0',
-    }
-  }
 })
 
-const columns = [
-  {
-    key: "title",
-    label: "Title",
-  },
-  {
-    key: "author",
-    label: "Author",
-  },
-  {
-    key: "description",
-    label: "Description",
-  },
-  {
-    key: "action",
-    label: "Action",
-  },
-];
+const PAGE_SIZE = 6;
 
 const Home = () => {
-  const [visible, setVisible] = useState(false);
+  const [isbookModalVisible, setIsbookModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | undefined>();
 
-  const handler = () => setVisible(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const handler = () => setIsbookModalVisible(true);
   const closeHandler = () => {
-    setVisible(false);
-    console.log("closed");
+    setIsbookModalVisible(false);
   };
   const [books, setBooks] = useState<Book[]>([])
   const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
@@ -105,7 +82,7 @@ const Home = () => {
       <NextUIProvider>
         <main>
           <NavigationBar/>
-          <Container lg>
+          <Container lg css={{overflow: 'hidden', paddingBottom: '10rem'}}>
             <Spacer y={2}/>
             <Grid.Container direction="row">
               {/* @ts-ignore - auto not supported from typing definition */}
@@ -192,6 +169,7 @@ const Home = () => {
                       animated={false}
                       status="primary"
                       label="Search"
+                      placeholder="search by title, author or description content..."
                       clearable
                       fullWidth
                     />
@@ -200,79 +178,50 @@ const Home = () => {
                   <Grid>
                     <Spacer y={1}/>
                   </Grid>
-                  <Grid>
-                    <Container style={{maxWidth: '100%', overflow: "hidden"}} gap={0}>
-                      <Table
-                        shadow={false}
-                        css={{
-                          padding: "0",
-                          height: "auto",
-                          minWidth: "100%",
-                        }}
-                        color="primary"
-                        // @ts-ignore prevent table border
-                        borderWeight={0}
-                      >
-                        <Table.Header columns={columns}>
-                          {({key, label}) => (
-                            <Table.Column allowsSorting align={key === 'action' ? 'end' : 'start'} key={key}>{label}</Table.Column>
-                          )}
-                        </Table.Header>
-                        <Table.Body items={results}>
-                          {(item) => (
-                            <Table.Row key={item.key}>
-                              {(columnKey) => columnKey === "action" ? <Table.Cell css={{ paddingRight: 0 }}><Button css={{ float: 'right' }} onPress={() => {
-                                  setSelectedBook(item)
-                                  handler()
-                              }} flat color="primary" auto>
-                                Detail
-                              </Button></Table.Cell> : <Table.Cell css={{
-                                maxWidth: '100px',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                              }}>{item[columnKey as keyof typeof item]}</Table.Cell>}
-                            </Table.Row>
-                          )}
-                        </Table.Body>
-                        <Table.Pagination
-                          css={{display: results.length > 0 ? undefined : 'none'}}
-                          rounded
-                          align="center"
-                          rowsPerPage={8}
-                          onPageChange={(page) => console.log({page})}
-                        />
-                      </Table>
+                  {/* @ts-ignore - auto not supported from typing definition */}
+                  <Grid xs="auto" md={0}>
+                    <Grid>
+                      <Grid.Container gap={1} css={{paddingBottom: '2rem'}}>
+                        {results.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE).map((book) =>
+                          <Grid key={book.key} xs>
+                            <Card isHoverable isPressable variant="flat" onPress={() => {
+                              handler()
+                              setSelectedBook(book)
+                            }}>
+                              <Card.Header>
+                                <Text b size={24} css={{
+                                  textGradient: "45deg, $blue600 -20%, $pink600 50%",
+                                }}>{book.title}</Text>
+                              </Card.Header>
+                              <Card.Body>
+                                <BookModalBody book={book}/>
+                              </Card.Body>
+                            </Card>
+                          </Grid>)}
+                      </Grid.Container>
+                    </Grid>
+                  </Grid>
+                  {/* @ts-ignore - auto not supported from typing definition */}
+                  <Grid xs="auto" md={0} justify="center">
+                    {results.length > 0 &&
+                        <Pagination initialPage={1} onChange={(page) => setCurrentPage(page)} onlyDots rounded size="sm"
+                                    total={Math.ceil(results.length / PAGE_SIZE)}/>}
+                  </Grid>
+                  {/* @ts-ignore - auto not supported from typing definition */}
+                  <Grid xs={0} md="auto">
+                    <Container css={{maxWidth: '100%', overflow: "hidden"}} gap={0}>
+                      <BooksTable books={results} onDetailPress={(book: Book) => {
+                        setSelectedBook(book)
+                        handler()
+                      }}/>
                     </Container>
                   </Grid>
                 </Grid.Container>
               </Grid>
             </Grid.Container>
           </Container>
-          <Modal
-            blur
-            aria-labelledby="modal-title"
-            open={visible}
-            onClose={closeHandler}
-          >
-            <Modal.Header>
-              <Text b size={18} id="modal-title">
-                {selectedBook?.title}
-              </Text>
-            </Modal.Header>
-            <Modal.Body>
-              <Text size={14}>
-                <Text b size={14}>Author:</Text> {selectedBook?.author ?? '-'}
-              </Text>
-              <Text size={14}>
-                <Text b size={14}>Description:</Text> {selectedBook?.description ?? '-'}
-              </Text>
-            </Modal.Body>
-            <Modal.Footer>
-              <Button auto flat color="error" onPress={closeHandler}>
-                Close
-              </Button>
-            </Modal.Footer>
+          <Modal open={isbookModalVisible && !!selectedBook} onClose={closeHandler} header={selectedBook?.title ?? '-'}>
+            {selectedBook && <BookModalBody book={selectedBook}/>}
           </Modal>
         </main>
       </NextUIProvider>
