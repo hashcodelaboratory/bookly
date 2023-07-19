@@ -3,6 +3,7 @@ import {BindingsChangeTarget} from "@nextui-org/react/types/use-input/use-input"
 import {useValidation} from "bookly/hook/use-validation";
 import {SyntheticEvent} from "react";
 import {Input} from "bookly/molecules/input";
+import {TextArea} from "bookly/molecules/text-area";
 
 type BookFormProps = {
   titleBindings: {
@@ -19,6 +20,8 @@ type BookFormProps = {
   }
   onSubmit: () => void;
 }
+
+const DESCRIPTION_MAX_LENGTH = 300
 
 export const BookForm = ({titleBindings, authorBindings, descriptionBindings, onSubmit}: BookFormProps) => {
   const {enabled, enableValidation, disableValidation, color, isValid} = useValidation(titleBindings.value);
@@ -78,15 +81,11 @@ export const BookForm = ({titleBindings, authorBindings, descriptionBindings, on
             <Spacer y={1.5}/>
           </Grid>
           <Grid>
-            <Textarea
-              animated={false}
-              status="primary"
-              {...descriptionBindings}
-              helperText={`optional ${descriptionBindings.value.length} / 300`}
+            <TextArea
+              bindings={descriptionBindings}
               label="Description"
               placeholder="e.g. A thrilling adventure awaits as our heroes embark on a quest to find the lost city."
-              fullWidth
-              maxLength={300}
+              maxLength={DESCRIPTION_MAX_LENGTH}
             />
           </Grid>
         </Grid.Container>
