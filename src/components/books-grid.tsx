@@ -15,9 +15,15 @@ export const BooksGrid = ({books, onPress}: BooksGridProps) => {
       <Grid key={book.key} xs>
         <Card isHoverable isPressable variant="flat" onPress={onGridItemPress(book)}>
           <Card.Header>
-            <Text b size={24} css={{
-              textGradient: "45deg, $blue600 -20%, $pink600 50%",
-            }}>{book.title}</Text>
+            <Text
+              b
+              size={24}
+              css={{
+                textGradient: "45deg, $blue600 -20%, $pink600 50%",
+              }}
+            >
+              {book.title}
+            </Text>
           </Card.Header>
           <Card.Body>
             <BookModalBody book={book}/>

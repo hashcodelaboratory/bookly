@@ -5,7 +5,6 @@ import {
   Grid,
   Input,
   NextUIProvider,
-  Pagination,
   Spacer,
   useInput
 } from "@nextui-org/react";
@@ -19,6 +18,8 @@ import {BookModalBody} from "bookly/components/book-modal-body";
 import {BooksTable} from "bookly/components/books-table/books-table";
 import {BookForm} from "bookly/components/book-form";
 import {BooksGrid} from "bookly/components/books-grid";
+import {Pagination} from "bookly/components/pagination";
+import {v4} from "uuid";
 
 const lightTheme = createTheme({
   type: 'light',
@@ -48,6 +49,8 @@ const Home = () => {
   const {queryBindings, results} = useSearch(books, ["title", "author", "description"])
 
   const onSave = () => {
+    setBooks([...books, {title, author, description, key: v4()}])
+
     titleReset()
     authorReset()
     descriptionReset()
@@ -111,9 +114,11 @@ const Home = () => {
                   </Grid>
                   {/* @ts-ignore - auto not supported from typing definition */}
                   <Grid xs="auto" md={0} justify="center">
-                    {results.length > 0 &&
-                        <Pagination initialPage={1} onChange={(page) => setCurrentPage(page)} onlyDots rounded size="sm"
-                                    total={Math.ceil(results.length / PAGE_SIZE)}/>}
+                    <Pagination
+                      length={books.length}
+                      onChange={(page: number) => setCurrentPage(page)}
+                      pageSize={PAGE_SIZE}
+                    />
                   </Grid>
                   {/* @ts-ignore - auto not supported from typing definition */}
                   <Grid xs={0} md="auto">
