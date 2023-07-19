@@ -15,14 +15,13 @@ import {withThemesProvider} from "bookly/theme/with-themes-provider";
 import {MainContainer} from "bookly/components/styled/main-container";
 import {TableContainer} from "bookly/components/styled/table-container";
 import {Search} from "bookly/components/search";
+import {usePagination} from "bookly/hook/use-pagination";
 
 const PAGE_SIZE = 6;
 
 const Home = () => {
   const [isBookModalVisible, setIsBookModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | undefined>();
-
-  const [currentPage, setCurrentPage] = useState(1);
 
   const openBookDetailModal = () => setIsBookModalVisible(true);
   const closeBookDetailModal = () => setIsBookModalVisible(false);
@@ -33,6 +32,7 @@ const Home = () => {
   const {value: description, reset: descriptionReset, bindings: descriptionBindings} = useInput("");
 
   const {queryBindings, results} = useSearch(books, ["title", "author", "description"])
+  const {currentPageItems, onPageChange} = usePagination(results, PAGE_SIZE)
 
   const onSave = () => {
     setBooks([...books, {title, author, description, key: v4()}])
@@ -79,17 +79,16 @@ const Home = () => {
               </Grid>
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs="auto" md={0}>
-                <Grid>
-                  <BooksGrid
-                    books={results.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE)}
-                    onPress={openDetail}/>
-                </Grid>
+                <BooksGrid
+                  books={currentPageItems}
+                  onPress={openDetail}
+                />
               </Grid>
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs="auto" md={0} justify="center">
                 <Pagination
-                  length={books.length}
-                  onChange={(page: number) => setCurrentPage(page)}
+                  length={results.length}
+                  onChange={onPageChange}
                   pageSize={PAGE_SIZE}
                 />
               </Grid>
