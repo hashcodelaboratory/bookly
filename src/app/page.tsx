@@ -1,5 +1,5 @@
 "use client" // limitation here for BETA https://nextui.org/docs/guide/nextui-plus-nextjs
-import {Grid, Input, Spacer, useInput} from "@nextui-org/react";
+import {Grid, Spacer, useInput} from "@nextui-org/react";
 import {useState} from "react";
 import {useSearch} from "bookly/hook/use-search";
 import {Book} from "bookly/model/book";

@@ -1,7 +1,8 @@
-import {Button, Grid, Input, Spacer, Textarea} from "@nextui-org/react";
+import {Button, Grid, Spacer, Textarea} from "@nextui-org/react";
 import {BindingsChangeTarget} from "@nextui-org/react/types/use-input/use-input";
 import {useValidation} from "bookly/hook/use-validation";
 import {SyntheticEvent} from "react";
+import {Input} from "bookly/molecules/input";
 
 type BookFormProps = {
   titleBindings: {
@@ -51,12 +52,9 @@ export const BookForm = ({titleBindings, authorBindings, descriptionBindings, on
                   color={color}
                   helperColor={color}
                   helperText="* required"
-                  animated={false}
-                  {...titleBindings}
+                  bindings={titleBindings}
                   label="Title"
-                  clearable
                   placeholder="e.g. The Lost City"
-                  fullWidth
                 />
               </Grid>
               {/* gap is not working as expected */}
@@ -66,14 +64,11 @@ export const BookForm = ({titleBindings, authorBindings, descriptionBindings, on
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs={12} sm="auto">
                 <Input
-                  animated={false}
                   status="primary"
-                  {...authorBindings}
+                  bindings={authorBindings}
                   helperText="optional"
                   label="Author"
-                  clearable
                   placeholder="e.g. John Doe"
-                  fullWidth
                 />
               </Grid>
             </Grid.Container>

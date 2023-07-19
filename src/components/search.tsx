@@ -1,5 +1,5 @@
-import {Input} from "@nextui-org/react";
 import {BindingsChangeTarget} from "@nextui-org/react/types/use-input/use-input";
+import {Input} from "bookly/molecules/input";
 
 type SearchProps = {
   queryBindings: {
@@ -8,14 +8,9 @@ type SearchProps = {
   }
 }
 
-export const Search = ({queryBindings}: SearchProps) => {
-  return <Input
-    {...queryBindings}
-    animated={false}
-    status="primary"
-    label="Search"
-    placeholder="search by title, author or description content..."
-    clearable
-    fullWidth
-  />
-}
+export const Search = ({queryBindings}: SearchProps) => <Input
+  bindings={queryBindings}
+  status="primary"
+  label="Search"
+  placeholder="search by title, author or description content..."
+/>

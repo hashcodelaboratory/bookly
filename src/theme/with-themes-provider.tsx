@@ -10,6 +10,7 @@ const darkTheme = createTheme({
   type: 'dark',
 })
 
+// eslint-disable-next-line react/display-name
 export const withThemesProvider: HigherOrderComponent = (WrappedComponent) => (props) =>
   <NextThemesProvider
     defaultTheme="system"
