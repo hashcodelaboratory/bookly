@@ -32,14 +32,14 @@ const darkTheme = createTheme({
 const PAGE_SIZE = 6;
 
 const Home = () => {
-  const [isbookModalVisible, setIsbookModalVisible] = useState(false);
+  const [isBookModalVisible, setIsBookModalVisible] = useState(false);
   const [selectedBook, setSelectedBook] = useState<Book | undefined>();
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const handler = () => setIsbookModalVisible(true);
+  const handler = () => setIsBookModalVisible(true);
   const closeHandler = () => {
-    setIsbookModalVisible(false);
+    setIsBookModalVisible(false);
   };
   const [books, setBooks] = useState<Book[]>([])
   const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
@@ -133,7 +133,7 @@ const Home = () => {
               </Grid>
             </Grid.Container>
           </Container>
-          <Modal open={isbookModalVisible && !!selectedBook} onClose={closeHandler} header={selectedBook?.title ?? '-'}>
+          <Modal open={isBookModalVisible && !!selectedBook} onClose={closeHandler} header={selectedBook?.title ?? '-'}>
             {selectedBook && <BookModalBody book={selectedBook}/>}
           </Modal>
         </main>
