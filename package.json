@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "test": "jest",
+    "test:coverage": "jest --coverage --collectCoverageFrom='src/**/*.{ts,tsx}'",
+    "check-types": "tsc"
   },
   "dependencies": {
     "@nextui-org/react": "1.0.0-beta.13",
@@ -21,7 +24,10 @@
     "uuid": "9.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "5.17.0",
+    "@testing-library/react": "14.0.0",
     "@types/fuzzy-search": "2.1.2",
+    "@types/jest": "29.5.3",
     "@types/node": "20.4.2",
     "@types/react": "18.2.15",
     "@types/react-dom": "18.2.7",
@@ -30,8 +36,14 @@
     "cypress": "12.17.1",
     "eslint": "8.45.0",
     "eslint-config-next": "13.4.10",
+    "jest": "29.6.1",
+    "jest-environment-jsdom": "^29.6.1",
     "postcss": "8.4.26",
     "tailwindcss": "3.3.3",
+    "ts-jest": "29.1.1",
     "typescript": "5.1.6"
+  },
+  "_moduleAliases": {
+    "bookly": "src/"
   }
 }

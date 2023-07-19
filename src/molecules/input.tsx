@@ -1,3 +1,4 @@
+import React from "react"
 import {Input as NextUIInput} from "@nextui-org/react";
 import {Bindable} from "bookly/types/bindable";
 import {Testable} from "bookly/types/testable";
@@ -19,6 +20,7 @@ export const Input = ({id, bindings, status, label, placeholder, color, helperTe
     {...bindings}
     animated={false}
     status={status}
+    aria-labelledby="test"
     label={label}
     color={color}
     placeholder={placeholder}
