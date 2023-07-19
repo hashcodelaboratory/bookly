@@ -16,15 +16,12 @@ import {MainContainer} from "bookly/components/styled/main-container";
 import {TableContainer} from "bookly/components/styled/table-container";
 import {Search} from "bookly/components/search";
 import {usePagination} from "bookly/hook/use-pagination";
+import {useBookDetail} from "bookly/hook/use-book-detail";
 
 const PAGE_SIZE = 6;
 
 const Home = () => {
-  const [isBookModalVisible, setIsBookModalVisible] = useState(false);
-  const [selectedBook, setSelectedBook] = useState<Book | undefined>();
-
-  const openBookDetailModal = () => setIsBookModalVisible(true);
-  const closeBookDetailModal = () => setIsBookModalVisible(false);
+  const {isBookDetailVisible, openDetail, closeDetail, selectedBook} = useBookDetail()
 
   const [books, setBooks] = useState<Book[]>([])
   const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
@@ -40,11 +37,6 @@ const Home = () => {
     titleReset()
     authorReset()
     descriptionReset()
-  }
-
-  const openDetail = (book: Book) => {
-    openBookDetailModal()
-    setSelectedBook(book)
   }
 
   return (
@@ -81,7 +73,7 @@ const Home = () => {
               <Grid xs="auto" md={0}>
                 <BooksGrid
                   books={currentPageItems}
-                  onPress={openDetail}
+                  onClick={openDetail}
                 />
               </Grid>
               {/* @ts-ignore - auto not supported from typing definition */}
@@ -95,7 +87,7 @@ const Home = () => {
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs={0} md="auto">
                 <TableContainer gap={0}>
-                  <BooksTable books={results} onDetailPress={openDetail}/>
+                  <BooksTable books={results} onDetailClick={openDetail}/>
                 </TableContainer>
               </Grid>
             </Grid.Container>
@@ -103,8 +95,8 @@ const Home = () => {
         </Grid.Container>
       </MainContainer>
       <Modal
-        open={isBookModalVisible && !!selectedBook}
-        onClose={closeBookDetailModal}
+        open={isBookDetailVisible && !!selectedBook}
+        onClose={closeDetail}
         header={selectedBook?.title ?? '-'}
       >
         {selectedBook && <BookModalBody book={selectedBook}/>}

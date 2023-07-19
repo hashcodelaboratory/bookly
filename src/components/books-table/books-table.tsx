@@ -12,12 +12,12 @@ type TableColumn<T> = {
 
 type BooksTableProps = {
   books: Book[]
-  onDetailPress: (book: Book) => void
+  onDetailClick: (book: Book) => void
 }
 
 // eslint-disable-next-line react/display-name
-const bookToTableRow = (onDetailPress: (book: Book) => void) => (book: Book) => {
-  const onPress = () => onDetailPress(book)
+const bookToTableRow = (onDetailClick: (book: Book) => void) => (book: Book) => {
+  const onClick = () => onDetailClick(book)
 
   return (
     <Table.Row key={book.key}>
@@ -25,7 +25,7 @@ const bookToTableRow = (onDetailPress: (book: Book) => void) => (book: Book) => 
         <Table.Cell css={{paddingRight: 0}}>
           <Button
             css={{float: 'right'}}
-            onPress={onPress}
+            onClick={onClick}
             flat
             color="primary"
             auto>
@@ -52,7 +52,7 @@ const bookTableColumnToTableColumn = ({key, label}: TableColumn<Book>) => {
   )
 }
 
-export const BooksTable = ({books, onDetailPress}: BooksTableProps) =>
+export const BooksTable = ({books, onDetailClick}: BooksTableProps) =>
   <Table
     shadow={false}
     css={{
@@ -67,7 +67,7 @@ export const BooksTable = ({books, onDetailPress}: BooksTableProps) =>
       {bookTableColumnToTableColumn}
     </Table.Header>
     <Table.Body items={books}>
-      {bookToTableRow(onDetailPress)}
+      {bookToTableRow(onDetailClick)}
     </Table.Body>
     <Table.Pagination
       css={{display: books.length > 0 ? undefined : 'none'}}
