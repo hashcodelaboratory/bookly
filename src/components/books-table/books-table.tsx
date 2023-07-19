@@ -1,4 +1,4 @@
-import {Button, styled, Table} from "@nextui-org/react";
+import {Button, Spacer, styled, Table, useAsyncList, useCollator} from "@nextui-org/react";
 import {Book} from "bookly/model/book";
 import {columns} from "bookly/components/books-table/columns";
 import {DataTableCell} from "bookly/molecules/table/data-table-cell";
@@ -45,7 +45,6 @@ const bookTableColumnToTableColumn = ({key, label}: TableColumn<Book>) => {
 
   return (
     <Table.Column
-      allowsSorting
       align={align}
       key={key}>
       {label}
@@ -53,16 +52,14 @@ const bookTableColumnToTableColumn = ({key, label}: TableColumn<Book>) => {
   )
 }
 
-export const BooksTable = ({books, onDetailPress}: BooksTableProps) => {
-
-  return <Table
+export const BooksTable = ({books, onDetailPress}: BooksTableProps) =>
+  <Table
     shadow={false}
     css={{
       padding: "0",
       height: "auto",
       minWidth: "100%"
     }}
-    color="primary"
     // @ts-ignore prevent table border
     borderWeight={0}
   >
@@ -79,4 +76,3 @@ export const BooksTable = ({books, onDetailPress}: BooksTableProps) => {
       rowsPerPage={8}
     />
   </Table>
-}

@@ -1,6 +1,6 @@
 import {Navbar, Switch, SwitchEvent, Text, useTheme} from "@nextui-org/react";
 import {useTheme as useNextTheme} from "next-themes";
-import { BiSun, BiMoon } from "react-icons/bi";
+import { BiSolidSun, BiSolidMoon } from "react-icons/bi";
 
 export const NavigationBar = () => {
   const {isDark, type} = useTheme();
@@ -25,8 +25,8 @@ export const NavigationBar = () => {
         <Switch
           checked={isDark}
           onChange={onThemeChange}
-          iconOn={<BiMoon />}
-          iconOff={<BiSun />}
+          iconOn={<BiSolidMoon />}
+          iconOff={<BiSolidSun />}
         />
       </Navbar.Item>
     </Navbar.Content>
