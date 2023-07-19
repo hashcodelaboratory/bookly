@@ -1,113 +1,283 @@
-import Image from 'next/image'
+"use client" // limitation here for BETA https://nextui.org/docs/guide/nextui-plus-nextjs
+import {
+  Button,
+  Container,
+  createTheme,
+  Grid,
+  Input,
+  Modal,
+  NextUIProvider,
+  Spacer,
+  Table,
+  Text,
+  Textarea,
+  useInput
+} from "@nextui-org/react";
+import {FormEventHandler, SyntheticEvent, useState} from "react";
+import {ThemeProvider as NextThemesProvider} from 'next-themes'
+import {v4} from "uuid";
+import {useSearch} from "bookly/hook/use-search";
+import {useValidation} from "bookly/hook/use-validation";
+import {Book} from "bookly/model/book";
+import {NavigationBar} from "bookly/components/navigation-bar";
 
-export default function Home() {
+const lightTheme = createTheme({
+  type: 'light',
+  theme: {
+    colors: {
+      primary: '#3ABEFF',
+    }
+  }
+})
+
+const darkTheme = createTheme({
+  type: 'dark',
+  theme: {
+    colors: {
+      primary: '#7F5AF0',
+    }
+  }
+})
+
+const columns = [
+  {
+    key: "title",
+    label: "Title",
+  },
+  {
+    key: "author",
+    label: "Author",
+  },
+  {
+    key: "description",
+    label: "Description",
+  },
+  {
+    key: "action",
+    label: "Action",
+  },
+];
+
+const Home = () => {
+  const [visible, setVisible] = useState(false);
+  const [selectedBook, setSelectedBook] = useState<Book | undefined>();
+
+  const handler = () => setVisible(true);
+  const closeHandler = () => {
+    setVisible(false);
+    console.log("closed");
+  };
+  const [books, setBooks] = useState<Book[]>([])
+  const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
+  const {value: author, reset: authorReset, bindings: authorBindings} = useInput("");
+  const {value: description, reset: descriptionReset, bindings: descriptionBindings} = useInput("");
+
+  const {queryBindings, results} = useSearch(books, ["title", "author", "description"])
+  const {enabled, enableValidation, disableValidation, color, isValid} = useValidation(title);
+
+  const onSave: FormEventHandler = (event: SyntheticEvent) => {
+    event.preventDefault()
+
+    if (!enabled) {
+      enableValidation()
+    }
+
+    if (!isValid) {
+      return
+    }
+
+    setBooks([...books, {title, author, description, key: v4()}])
+    titleReset()
+    authorReset()
+    descriptionReset()
+    disableValidation()
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <NextThemesProvider
+      defaultTheme="system"
+      attribute="class"
+      value={{
+        light: lightTheme.className,
+        dark: darkTheme.className
+      }}
+    >
+      <NextUIProvider>
+        <main>
+          <NavigationBar/>
+          <Container lg>
+            <Spacer y={2}/>
+            <Grid.Container direction="row">
+              {/* @ts-ignore - auto not supported from typing definition */}
+              <Grid xs={12} md="auto">
+                <form onSubmit={onSave}>
+                  <Grid.Container direction="column">
+                    <Grid>
+                      <Grid.Container direction="column">
+                        <Grid>
+                          <Grid.Container direction="row">
+                            {/* @ts-ignore - auto not supported from typing definition */}
+                            <Grid xs={12} sm="auto">
+                              <Input
+                                status={color}
+                                color={color}
+                                helperColor={color}
+                                helperText="* required"
+                                animated={false}
+                                {...titleBindings}
+                                label="Title"
+                                clearable
+                                placeholder="e.g. The Lost City"
+                                fullWidth
+                              />
+                            </Grid>
+                            {/* gap is not working as expected */}
+                            <Grid>
+                              <Spacer x={1}/>
+                            </Grid>
+                            {/* @ts-ignore - auto not supported from typing definition */}
+                            <Grid xs={12} sm="auto">
+                              <Input
+                                animated={false}
+                                status="primary"
+                                {...authorBindings}
+                                helperText="optional"
+                                label="Author"
+                                clearable
+                                placeholder="e.g. John Doe"
+                                fullWidth
+                              />
+                            </Grid>
+                          </Grid.Container>
+                        </Grid>
+                        {/* gap is not working as expected */}
+                        <Grid>
+                          <Spacer y={1.5}/>
+                        </Grid>
+                        <Grid>
+                          <Textarea
+                            animated={false}
+                            status="primary"
+                            {...descriptionBindings}
+                            helperText={`optional ${description.length} / 300`}
+                            label="Description"
+                            placeholder="e.g. A thrilling adventure awaits as our heroes embark on a quest to find the lost city."
+                            fullWidth
+                            maxLength={300}
+                          />
+                        </Grid>
+                      </Grid.Container>
+                    </Grid>
+                    {/* gap is not working as expected */}
+                    <Grid>
+                      <Spacer y={2}/>
+                    </Grid>
+                    <Grid>
+                      <Button size="lg" style={{width: '100%', zIndex: 1}} color="gradient" type="submit">Save</Button>
+                    </Grid>
+                  </Grid.Container>
+                </form>
+              </Grid>
+              {/* gap is not working as expected */}
+              <Grid>
+                <Spacer x={2} y={4}/>
+              </Grid>
+              {/* @ts-ignore - auto not supported from typing definition */}
+              <Grid xs={12} md="auto">
+                <Grid.Container direction="column">
+                  {/* @ts-ignore - auto not supported from typing definition */}
+                  <Grid xs="auto">
+                    <Input
+                      {...queryBindings}
+                      animated={false}
+                      status="primary"
+                      label="Search"
+                      clearable
+                      fullWidth
+                    />
+                  </Grid>
+                  {/* gap is not working as expected */}
+                  <Grid>
+                    <Spacer y={1}/>
+                  </Grid>
+                  <Grid>
+                    <Container style={{maxWidth: '100%', overflow: "hidden"}} gap={0}>
+                      <Table
+                        shadow={false}
+                        css={{
+                          padding: "0",
+                          height: "auto",
+                          minWidth: "100%",
+                        }}
+                        color="primary"
+                        // @ts-ignore prevent table border
+                        borderWeight={0}
+                      >
+                        <Table.Header columns={columns}>
+                          {({key, label}) => (
+                            <Table.Column allowsSorting align={key === 'action' ? 'end' : 'start'} key={key}>{label}</Table.Column>
+                          )}
+                        </Table.Header>
+                        <Table.Body items={results}>
+                          {(item) => (
+                            <Table.Row key={item.key}>
+                              {(columnKey) => columnKey === "action" ? <Table.Cell css={{ paddingRight: 0 }}><Button css={{ float: 'right' }} onPress={() => {
+                                  setSelectedBook(item)
+                                  handler()
+                              }} flat color="primary" auto>
+                                Detail
+                              </Button></Table.Cell> : <Table.Cell css={{
+                                maxWidth: '100px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}>{item[columnKey as keyof typeof item]}</Table.Cell>}
+                            </Table.Row>
+                          )}
+                        </Table.Body>
+                        <Table.Pagination
+                          css={{display: results.length > 0 ? undefined : 'none'}}
+                          rounded
+                          align="center"
+                          rowsPerPage={8}
+                          onPageChange={(page) => console.log({page})}
+                        />
+                      </Table>
+                    </Container>
+                  </Grid>
+                </Grid.Container>
+              </Grid>
+            </Grid.Container>
+          </Container>
+          <Modal
+            blur
+            aria-labelledby="modal-title"
+            open={visible}
+            onClose={closeHandler}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+            <Modal.Header>
+              <Text b size={18} id="modal-title">
+                {selectedBook?.title}
+              </Text>
+            </Modal.Header>
+            <Modal.Body>
+              <Text size={14}>
+                <Text b size={14}>Author:</Text> {selectedBook?.author ?? '-'}
+              </Text>
+              <Text size={14}>
+                <Text b size={14}>Description:</Text> {selectedBook?.description ?? '-'}
+              </Text>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button auto flat color="error" onPress={closeHandler}>
+                Close
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </main>
+      </NextUIProvider>
+    </NextThemesProvider>
   )
 }
+
+export default Home
