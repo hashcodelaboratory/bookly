@@ -14,6 +14,7 @@ import {v4} from "uuid";
 import {withThemesProvider} from "bookly/theme/with-themes-provider";
 import {MainContainer} from "bookly/components/styled/main-container";
 import {TableContainer} from "bookly/components/styled/table-container";
+import {Search} from "bookly/components/search";
 
 const PAGE_SIZE = 6;
 
@@ -70,15 +71,7 @@ const Home = () => {
             <Grid.Container direction="column">
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs="auto">
-                <Input
-                  {...queryBindings}
-                  animated={false}
-                  status="primary"
-                  label="Search"
-                  placeholder="search by title, author or description content..."
-                  clearable
-                  fullWidth
-                />
+                <Search queryBindings={queryBindings}/>
               </Grid>
               {/* gap is not working as expected */}
               <Grid>
@@ -110,8 +103,11 @@ const Home = () => {
           </Grid>
         </Grid.Container>
       </MainContainer>
-      <Modal open={isBookModalVisible && !!selectedBook} onClose={closeBookDetailModal}
-             header={selectedBook?.title ?? '-'}>
+      <Modal
+        open={isBookModalVisible && !!selectedBook}
+        onClose={closeBookDetailModal}
+        header={selectedBook?.title ?? '-'}
+      >
         {selectedBook && <BookModalBody book={selectedBook}/>}
       </Modal>
     </main>
