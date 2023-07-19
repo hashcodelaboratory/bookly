@@ -1,5 +1,5 @@
 "use client" // limitation here for BETA https://nextui.org/docs/guide/nextui-plus-nextjs
-import {Container, Grid, Input, Spacer, useInput} from "@nextui-org/react";
+import {Grid, Input, Spacer, useInput} from "@nextui-org/react";
 import {useState} from "react";
 import {useSearch} from "bookly/hook/use-search";
 import {Book} from "bookly/model/book";
@@ -12,6 +12,8 @@ import {BooksGrid} from "bookly/components/books-grid";
 import {Pagination} from "bookly/components/pagination";
 import {v4} from "uuid";
 import {withThemesProvider} from "bookly/theme/with-themes-provider";
+import {MainContainer} from "bookly/components/styled/main-container";
+import {TableContainer} from "bookly/components/styled/table-container";
 
 const PAGE_SIZE = 6;
 
@@ -21,10 +23,9 @@ const Home = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const handler = () => setIsBookModalVisible(true);
-  const closeHandler = () => {
-    setIsBookModalVisible(false);
-  };
+  const openBookDetailModal = () => setIsBookModalVisible(true);
+  const closeBookDetailModal = () => setIsBookModalVisible(false);
+
   const [books, setBooks] = useState<Book[]>([])
   const {value: title, reset: titleReset, bindings: titleBindings} = useInput("");
   const {value: author, reset: authorReset, bindings: authorBindings} = useInput("");
@@ -40,10 +41,15 @@ const Home = () => {
     descriptionReset()
   }
 
+  const openDetail = (book: Book) => {
+    openBookDetailModal()
+    setSelectedBook(book)
+  }
+
   return (
     <main>
       <NavigationBar/>
-      <Container lg css={{overflow: 'hidden', paddingBottom: '10rem'}}>
+      <MainContainer lg>
         <Spacer y={2}/>
         <Grid.Container direction="row">
           {/* @ts-ignore - auto not supported from typing definition */}
@@ -83,10 +89,7 @@ const Home = () => {
                 <Grid>
                   <BooksGrid
                     books={results.slice((currentPage - 1) * PAGE_SIZE, (currentPage - 1) * PAGE_SIZE + PAGE_SIZE)}
-                    onPress={(book: Book) => {
-                      handler()
-                      setSelectedBook(book)
-                    }}/>
+                    onPress={openDetail}/>
                 </Grid>
               </Grid>
               {/* @ts-ignore - auto not supported from typing definition */}
@@ -99,18 +102,16 @@ const Home = () => {
               </Grid>
               {/* @ts-ignore - auto not supported from typing definition */}
               <Grid xs={0} md="auto">
-                <Container css={{maxWidth: '100%', overflow: "hidden"}} gap={0}>
-                  <BooksTable books={results} onDetailPress={(book: Book) => {
-                    setSelectedBook(book)
-                    handler()
-                  }}/>
-                </Container>
+                <TableContainer gap={0}>
+                  <BooksTable books={results} onDetailPress={openDetail}/>
+                </TableContainer>
               </Grid>
             </Grid.Container>
           </Grid>
         </Grid.Container>
-      </Container>
-      <Modal open={isBookModalVisible && !!selectedBook} onClose={closeHandler} header={selectedBook?.title ?? '-'}>
+      </MainContainer>
+      <Modal open={isBookModalVisible && !!selectedBook} onClose={closeBookDetailModal}
+             header={selectedBook?.title ?? '-'}>
         {selectedBook && <BookModalBody book={selectedBook}/>}
       </Modal>
     </main>
